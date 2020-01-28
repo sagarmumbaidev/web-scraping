@@ -1,19 +1,18 @@
+from lxml import html
 import requests
-from bs4 import BeautifulSoup
 import pandas as pd
 
-url = 'particular-ecommerce-website-url'
-
-page = requests.get(url)
-soup = BeautifulSoup(page.content,'html.parser')
-
+page = requests.get('ecommerce-website')
+page_content = html.fromstring(page.content)
 product_names = []
-products = soup.find_all('a', class_='class_name')
+
+products = page_content.xpath('//*[@class="targeted-class"]/@title')
 
 for product in products:
-	product_names.append(product.find('div', class_='_3wU53n').text)
+	product_names.append(product)
+
 
 data = pd.DataFrame({'Product Name': product_names})
 data.to_csv('products.csv', index=False, encoding='utf-8')
 
-	# print(product, end='\n'*2)
+#print(product_names,  end='\n'*2)
